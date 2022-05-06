@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/panze/AndroidStudioProjects/budget_app/app/src/main/res/layout/activity_main.xml" value="0.5203125" />
+        <entry key="..\:/Users/panze/AndroidStudioProjects/budget_app/app/src/main/res/layout/fragment_expense.xml" value="0.28313253012048195" />
+        <entry key="..\:/Users/panze/AndroidStudioProjects/budget_app/app/src/main/res/layout/fragment_expense_list.xml" value="0.4287037037037037" />
+        <entry key="..\:/Users/panze/AndroidStudioProjects/budget_app/app/src/main/res/layout/list_item_expense.xml" value="0.4287037037037037" />
+        <entry key="..\:/Users/panze/AndroidStudioProjects/budget_app/app/src/main/res/menu/fragment_expense_list.xml" value="0.2786458333333333" />
         <entry key="..\:/Users/panze/AndroidStudioProjects/budgetapp/app/src/main/res/layout/activity_main.xml" value="0.25" />
       </map>
     </option>

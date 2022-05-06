@@ -1,8 +1,12 @@
 <resources>
-    <string name="app_name">budget app</string>
+    <string name="app_name">Budget</string>
     <string name="expense_title_hint">Enter a title for the expense.</string>
     <string name="expense_title_label">Title</string>
-    <string name="expense_details_label">Details</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="expense_Category_hint">Enter a category for the expense.</string>
+    <string name="category_label">Category</string>
+    <string name="expense_title">Expense Title</string>
+    <string name="expense_category">Expense Category</string>
+    <string name="expense_date">Expense Date</string>
+    <string name="new_expense">New Expense</string>
+    <string name="todo">TODO</string>
 </resources>

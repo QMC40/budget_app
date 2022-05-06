@@ -1,11 +1,11 @@
 package com.example.budgetapp
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.*
 
-data class Expense(
-    val id: UUID = UUID.randomUUID(),
-    var amount: Double = 0.0,
-    var title: String = "",
-    var type: String = "",
-    var date: Date = Date()
-)
+@Entity
+data class Expense(@PrimaryKey val id: UUID = UUID.randomUUID(),
+                   var title: String = "",
+                   var category: String = "",
+                   var date: Date = Date())
