@@ -1,39 +1,38 @@
 package com.example.budgetapp
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val TAG = "ExpenseFragment"
+private const val ARG_EXPENSE_ID = "expense_id"
+private const val DIALOG_DATE = "DialogDate"
+private const val REQUEST_DATE = 0
 
-/**
- * A simple [Fragment] subclass.
- * Use the [expenseFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class expenseFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class ExpenseFragment : Fragment(), DatePickerFragment.Callbacks {
 
-    private lateinit var expense: Expense
+    private lateinit var expenses: Expense
     private lateinit var titleField: EditText
+    private lateinit var categoryField: EditText
+    private lateinit var dateButton: Button
+    private val expenseDetailViewModel: ExpenseDetailViewModel by lazy {
+        ViewModelProviders.of(this).get(ExpenseDetailViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        expense = Expense()
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        expenses = Expense()
+        val expenseId: UUID = arguments?.getSerializable(ARG_EXPENSE_ID) as UUID
+        expenseDetailViewModel.loadExpense(expenseId)
     }
 
     override fun onCreateView(
@@ -41,8 +40,24 @@ class expenseFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        titleField = view?.findViewById(R.id.expense_title) as EditText
-        return inflater.inflate(R.layout.fragment_expense, container, false)
+        val view = inflater.inflate(R.layout.fragment_expense, container, false)
+
+        titleField = view.findViewById(R.id.expense_title) as EditText
+        categoryField = view.findViewById(R.id.expense_category) as EditText
+        dateButton = view.findViewById(R.id.expense_date) as Button
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        expenseDetailViewModel.expenseLiveData.observe(
+            viewLifecycleOwner,
+            Observer { expense ->
+                expense?.let {
+                    this.expenses = expense
+                    updateUI()
+                }
+            })
     }
 
     override fun onStart() {
@@ -53,41 +68,51 @@ class expenseFragment : Fragment() {
                 start: Int,
                 count: Int,
                 after: Int
-            ) {
-// This space intentionally left blank
-            }
+            ) {}
+
             override fun onTextChanged(
                 sequence: CharSequence?,
                 start: Int,
                 before: Int,
                 count: Int
             ) {
-                expense.title = sequence.toString()
+                expenses.title = sequence.toString()
             }
-            override fun afterTextChanged(sequence: Editable?) {
-// This one too
-            }
+            override fun afterTextChanged(sequence: Editable?) {}
         }
         titleField.addTextChangedListener(titleWatcher)
+        dateButton.setOnClickListener {
+            DatePickerFragment.newInstance(expenses.date).apply {
+                setTargetFragment(this@ExpenseFragment, REQUEST_DATE)
+                show(this@ExpenseFragment.requireFragmentManager(), DIALOG_DATE)
+            }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        expenseDetailViewModel.saveExpense(expenses)
+    }
+
+    override fun onDateSelected(date: Date) {
+        expenses.date = date
+        updateUI()
+    }
+
+    private fun updateUI() {
+        titleField.setText(expenses.title)
+        categoryField.setText(expenses.category)
+        dateButton.text = expenses.date.toString()
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment expenseFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            expenseFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+        fun newInstance(expenseId: UUID): ExpenseFragment {
+            val args = Bundle().apply {
+                putSerializable(ARG_EXPENSE_ID, expenseId)
             }
+            return ExpenseFragment().apply {
+                arguments = args
+            }
+        }
     }
 }
